@@ -1,16 +1,49 @@
-import App from '@/App';
-import Home from '@/pages/Home';
-import About from '@/pages/About';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { lazy } from 'react'
+import Home from '@/views/home'
+// import About from '@/views/about'
 
-const baseRouter = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
-);
-export default baseRouter;
+// 懒加载
+const Page1 = lazy(() => import('@/views/page1'))
+const Page2 = lazy(() => import('@/views/page2'))
+const P404 = lazy(() => import('@/views/404'))
+
+import { Navigate } from 'react-router-dom' //重定向组件
+
+const withLoadingComponent = (comp: JSX.Element) => (
+  <React.Suspense fallback={<div>loading...</div>}>
+    {comp}
+  </React.Suspense>
+)
+const routes = [
+  {
+    path: '/',
+    element: <Navigate to="/page1" />,
+  },
+  {
+    path: '/',
+    element:<Home/>,
+    children:[
+      {
+        path: '/page1',
+        element: withLoadingComponent(<Page1 />),
+      },
+      {
+        path: '/page2',
+        element: withLoadingComponent(<Page2 />),
+      },
+    ]
+  },
+  {
+    path: '*',
+    element: withLoadingComponent(<P404 />)
+  },
+  // {
+  //   path: '/home',
+  //   element: <Home />,
+  // },
+  // {
+  //   path: '/about',
+  //   element: withLoadingComponent(<About />)
+  // }
+]
+export default routes
