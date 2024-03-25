@@ -47,18 +47,19 @@ export default function NoMatch() {
     return '#' + color;
   }
   // 初始化canvas
-  function canvasInit() {
-    canvas2d = canvasRef.current?.getContext('2d') || null;
-    if (canvas2d) {
-      canvasObj.width = canvas2d.canvas.width = window.screen.width;
-      canvasObj.height = canvas2d.canvas.height = window.screen.height;
-      canvas2d.fillStyle = color2();
-      canvasObj.words = Array(256).fill(1);
-      timeDraw = setInterval(draw, 100);
-    }
-  }
+
 
   useEffect(() => {
+    const canvasInit = () => {
+      canvas2d = canvasRef.current?.getContext('2d') || null;
+      if (canvas2d) {
+        canvasObj.width = canvas2d.canvas.width = window.screen.width;
+        canvasObj.height = canvas2d.canvas.height = window.screen.height;
+        canvas2d.fillStyle = color2();
+        canvasObj.words = Array(256).fill(1);
+        timeDraw = setInterval(draw, 100);
+      }
+    }
     canvasInit();
     return () => {
       clearInterval(timeDraw);

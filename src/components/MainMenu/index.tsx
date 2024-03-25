@@ -10,7 +10,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 const { Sider } = Layout;
 
 
@@ -58,7 +58,7 @@ const items: MenuItem[] = [
     label: 'User',
     key: 'page3',
     icon: <UserOutlined />,
-    children:[
+    children: [
       {
         label: 'Tom',
         key: '/about',
@@ -78,7 +78,7 @@ const items: MenuItem[] = [
     label: 'Team',
     key: 'page4',
     icon: <TeamOutlined />,
-    children:[
+    children: [
       {
         label: 'Team 1',
         key: '6',
@@ -99,17 +99,45 @@ const items: MenuItem[] = [
 const CompMainMenu: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
-  const navigateTo = useNavigate();
 
+  const navigateTo = useNavigate();
+  const currentRoute = useLocation();//获取当前路径
 
   const menuClick = (e: { key: string }) => {
-    console.log(e.key, "dianjile ")
     navigateTo(e.key)
   }
-  const onOpenChange = (keys: string[]) => {
-    if (keys.length > 1) {
-      keys.splice(0, 1);
+
+
+  // 刷新依然弹出 选择的二级选项 star
+  let firstOpenKey: string = '';
+
+  function findKey(obj:{key:string}){
+    return obj.key == currentRoute.pathname;
+  }
+
+  for(let i =0;i<items.length;i++){
+    if(items[i]!['children'] &&items[i]!['children'].length>0 && items[i]!['children'].find(findKey)){
+      firstOpenKey = items[i]!.key as string;
+      break;
     }
+  }
+  // end
+
+  const [openKeys, setOpenKeys] = useState([firstOpenKey]);
+
+  // for (const item of items) {
+  //   if (item && item!.children) {
+  //     const matchedChild = item.children.find(child => child.key === currentRoute.pathname);
+  //     if (matchedChild) {
+  //       firstOpenKey = item.key; // 如果找到匹配的子菜单项，返回父菜单项的key
+  //       break;
+  //     }
+  //   }
+  // }
+
+  const onOpenChange = (keys: string[]) => {
+    setOpenKeys([keys[keys.length - 1]]);
+
   };
 
   return (
@@ -117,9 +145,10 @@ const CompMainMenu: React.FC = () => {
       <div className="demo-logo-vertical" />
       <Menu
         theme="dark"
-        defaultSelectedKeys={['/page1']}
+        defaultSelectedKeys={[currentRoute.pathname]}
         mode="inline" items={items}
         onOpenChange={onOpenChange}
+        openKeys={openKeys}
         onClick={menuClick} />
     </Sider>
   )
