@@ -1,0 +1,17 @@
+$color:#eee;
+body{
+  background-color: $color;
+  // 文字禁用
+  -webkit-user-select: none;
+  user-select: none;
+}
+img{
+  // 不允许图片拖动
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+.demo-logo-vertical{
+  height: 32px;
+  margin: 16px;
+  background: rgba( 255,255,255,0.3);
+}
